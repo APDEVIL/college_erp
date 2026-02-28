@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+// biome-ignore lint/style/useImportType: <explanation>
+/** biome-ignore-all assist/source/organizeImports: <explanation> */
+import { type NextRequest, NextResponse } from "next/server";
 import { db } from "@/server/db/index";
 import { students } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
