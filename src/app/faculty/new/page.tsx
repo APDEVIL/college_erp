@@ -1,5 +1,7 @@
+/** biome-ignore-all assist/source/useSortedAttributes: <explanation> */
 "use client";
 
+// biome-ignore assist/source/organizeImports: <explanation>
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/utils/api";
@@ -13,7 +15,12 @@ interface FacultyForm {
   password?: string;
 }
 
-export default function NewFacultyPage({ existingData }: { existingData?: FacultyForm }) {
+// FIX: Changed this line to accept standard Next.js 15 props
+export default function NewFacultyPage(props: any) {
+  // We define this here so your useState logic below doesn't break.
+  // Since this is the "/new" route, it will always be undefined.
+  const existingData = props?.existingData as FacultyForm | undefined;
+  
   const router = useRouter();
 
   const [form, setForm] = useState<FacultyForm>({
@@ -21,7 +28,7 @@ export default function NewFacultyPage({ existingData }: { existingData?: Facult
     last_name: existingData?.last_name || "",
     email: existingData?.email || "",
     department: existingData?.department || "",
-    password: "", // empty by default for edit
+    password: "", 
     id: existingData?.id,
   });
 
@@ -41,7 +48,7 @@ export default function NewFacultyPage({ existingData }: { existingData?: Facult
     setError("");
 
     try {
-      const method = form.id ? "PUT" : "POST"; // if id exists → edit
+      const method = form.id ? "PUT" : "POST";
       const res = await apiFetch("/api/faculty", {
         method,
         body: JSON.stringify(form),
@@ -49,7 +56,7 @@ export default function NewFacultyPage({ existingData }: { existingData?: Facult
 
       if (!res) throw new Error("Failed to save faculty");
 
-      router.push("/faculty"); // redirect after save
+      router.push("/faculty");
     } catch (err: unknown) {
       if (err instanceof Error) setError(err.message);
       else setError("Something went wrong");
@@ -59,10 +66,10 @@ export default function NewFacultyPage({ existingData }: { existingData?: Facult
   };
 
   return (
-    <div className="max-w-xl bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-semibold mb-4">{form.id ? "Edit Faculty" : "Add Faculty"}</h2>
+    <div className="max-w-xl rounded bg-white p-6 shadow">
+      <h2 className="mb-4 font-semibold text-xl">{form.id ? "Edit Faculty" : "Add Faculty"}</h2>
 
-      {error && <p className="text-red-500 mb-4">{error}</p>}
+      {error && <p className="mb-4 text-red-500">{error}</p>}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
@@ -71,7 +78,7 @@ export default function NewFacultyPage({ existingData }: { existingData?: Facult
           value={form.first_name}
           onChange={handleChange}
           required
-          className="w-full border p-2 rounded"
+          className="w-full rounded border p-2"
         />
 
         <input
@@ -80,7 +87,7 @@ export default function NewFacultyPage({ existingData }: { existingData?: Facult
           value={form.last_name}
           onChange={handleChange}
           required
-          className="w-full border p-2 rounded"
+          className="w-full rounded border p-2"
         />
 
         <input
@@ -90,7 +97,7 @@ export default function NewFacultyPage({ existingData }: { existingData?: Facult
           value={form.email}
           onChange={handleChange}
           required
-          className="w-full border p-2 rounded"
+          className="w-full rounded border p-2"
         />
 
         <input
@@ -99,7 +106,7 @@ export default function NewFacultyPage({ existingData }: { existingData?: Facult
           value={form.department}
           onChange={handleChange}
           required
-          className="w-full border p-2 rounded"
+          className="w-full rounded border p-2"
         />
 
         <input
@@ -108,13 +115,13 @@ export default function NewFacultyPage({ existingData }: { existingData?: Facult
           placeholder={form.id ? "New Password (leave blank to keep current)" : "Password"}
           value={form.password}
           onChange={handleChange}
-          className="w-full border p-2 rounded"
+          className="w-full rounded border p-2"
         />
 
         <button
           type="submit"
           disabled={loading}
-          className="bg-blue-600 text-white px-4 py-2 rounded w-full"
+          className="w-full rounded bg-blue-600 px-4 py-2 text-white"
         >
           {loading ? "Saving..." : form.id ? "Update Faculty" : "Create Faculty"}
         </button>
